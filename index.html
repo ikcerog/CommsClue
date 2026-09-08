@@ -22,14 +22,20 @@
 
       <div class="controls">
         <div class="dice">
-          <div id="die-face" class="die-face">?</div>
-          <button id="roll-dice">Roll Dice</button>
+          <div id="die-face" class="die-face"></div>
+          <div class="dice-side">
+            <button id="roll-dice">Roll Dice</button>
+            <div id="dice-history" class="dice-history"></div>
+          </div>
         </div>
         <div class="turn-tracker">
           <label for="turn-select">Turn:</label>
           <select id="turn-select"></select>
         </div>
       </div>
+
+      <button id="reset-session" class="link-button">Reset turn / dice / selection</button>
+      <div id="sr-status" class="sr-only" role="status" aria-live="polite"></div>
     </section>
 
     <section class="sheet-panel">

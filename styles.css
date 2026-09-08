@@ -58,6 +58,16 @@ body {
   background: var(--panel);
   border-radius: 10px;
   padding: 1rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
 }
 
 .board-panel h2, .sheet-panel h2 {
@@ -89,9 +99,32 @@ body {
   text-align: center;
   padding: 0.3rem;
   overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
 }
 
-.room .icon { font-size: clamp(1rem, 3vw, 1.6rem); }
+.room:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.room:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.room.selected {
+  border-color: #fff;
+  background: rgba(201, 162, 39, 0.18);
+  box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.35), inset 0 0 12px rgba(201, 162, 39, 0.25);
+}
+
+.room .icon {
+  font-size: clamp(1rem, 3vw, 1.6rem);
+  transition: transform 0.15s ease;
+}
+
+.room:hover .icon { transform: scale(1.12); }
 
 .room.passage::after {
   content: "↔";
@@ -122,6 +155,15 @@ body {
   flex-shrink: 0;
 }
 
+.token.active {
+  animation: token-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes token-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.6); }
+  50% { box-shadow: 0 0 0 4px rgba(255, 255, 255, 0); }
+}
+
 .hallway {
   background: rgba(255, 255, 255, 0.05);
   border: 1px dashed rgba(255, 255, 255, 0.15);
@@ -144,20 +186,39 @@ body {
 .dice {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.75rem;
+}
+
+.dice-side {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
 }
 
 .die-face {
-  width: 2.4rem;
-  height: 2.4rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 3.2rem;
+  height: 3.2rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 2px;
+  padding: 0.4rem;
   border: 2px solid var(--accent);
-  border-radius: 6px;
-  font-size: 1.2rem;
-  font-weight: bold;
+  border-radius: 8px;
   background: rgba(255, 255, 255, 0.04);
+}
+
+.die-face .pip {
+  border-radius: 50%;
+  background: transparent;
+  align-self: center;
+  justify-self: center;
+  width: 60%;
+  height: 60%;
+}
+
+.die-face .pip.active {
+  background: var(--text);
 }
 
 .dice button, .turn-tracker select {
@@ -167,7 +228,34 @@ body {
   background: var(--bg);
   color: var(--text);
   cursor: pointer;
+  transition: transform 0.1s ease, filter 0.1s ease;
 }
+
+.dice button:hover:not(:disabled) { filter: brightness(1.15); }
+.dice button:active:not(:disabled) { transform: scale(0.96); }
+.dice button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.dice-history {
+  display: flex;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+  min-height: 1.4rem;
+}
+
+.dice-chip {
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 4px;
+  border: 1px solid var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  opacity: 0.75;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.dice-chip:last-child { opacity: 1; font-weight: bold; }
 
 .turn-tracker {
   display: flex;
@@ -175,6 +263,20 @@ body {
   gap: 0.5rem;
   font-size: 0.85rem;
 }
+
+.link-button {
+  display: inline-block;
+  margin-top: 0.75rem;
+  background: none;
+  border: none;
+  color: var(--accent);
+  text-decoration: underline;
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+.link-button:hover { filter: brightness(1.2); }
 
 .sheet-header {
   display: flex;
@@ -211,6 +313,19 @@ button.danger:hover { filter: brightness(1.1); }
   color: var(--accent);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.sheet-count {
+  font-size: 0.7rem;
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--text);
+  opacity: 0.6;
+  font-weight: normal;
 }
 
 .sheet-items {
@@ -230,6 +345,15 @@ button.danger:hover { filter: brightness(1.1); }
   cursor: pointer;
   user-select: none;
   font-size: 0.85rem;
+  transition: transform 0.08s ease, background 0.12s ease, border-color 0.12s ease;
+}
+
+.sheet-item:hover { background: rgba(255, 255, 255, 0.08); }
+.sheet-item:active { transform: scale(0.98); }
+
+.sheet-item:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
 }
 
 .sheet-item .mark {
