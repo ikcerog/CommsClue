@@ -1,0 +1,41 @@
+{
+  "id": "the-simpsons",
+  "name": "The Simpsons",
+  "tagline": "Who conked Springfield's finest?",
+  "colors": {
+    "board": "#1a2744",
+    "accent": "#ffd90f",
+    "text": "#fff6da"
+  },
+  "rooms": [
+    { "id": "kwik_e_mart",   "name": "Kwik-E-Mart",             "row": 1, "col": 1, "icon": "🏪" },
+    { "id": "moes_tavern",   "name": "Moe's Tavern",            "row": 1, "col": 2, "icon": "🍺" },
+    { "id": "power_plant",   "name": "Nuclear Power Plant",     "row": 1, "col": 3, "icon": "☢️" },
+    { "id": "elementary",    "name": "Springfield Elementary",  "row": 2, "col": 1, "icon": "🏫" },
+    { "id": "simpson_house", "name": "Simpson House",           "row": 2, "col": 2, "icon": "🏠" },
+    { "id": "krusty_burger", "name": "Krusty Burger",           "row": 2, "col": 3, "icon": "🍔" },
+    { "id": "church",        "name": "First Church of Springfield", "row": 3, "col": 1, "icon": "⛪" },
+    { "id": "park",          "name": "Springfield Park",        "row": 3, "col": 2, "icon": "🌳" },
+    { "id": "duff_brewery",  "name": "Duff Brewery",            "row": 3, "col": 3, "icon": "🍻" }
+  ],
+  "passages": [
+    ["kwik_e_mart", "duff_brewery"],
+    ["power_plant", "church"]
+  ],
+  "weapons": [
+    { "id": "duff_bottle",   "name": "Duff Beer Bottle",  "icon": "🍺" },
+    { "id": "skateboard",    "name": "Bart's Skateboard", "icon": "🛹" },
+    { "id": "wrench",        "name": "Homer's Wrench",    "icon": "🔧" },
+    { "id": "seltzer",       "name": "Seltzer Bottle",    "icon": "🥤" },
+    { "id": "saxophone",     "name": "Lisa's Saxophone",  "icon": "🎷" },
+    { "id": "cane",          "name": "Mr. Burns' Cane",   "icon": "🦯" }
+  ],
+  "suspects": [
+    { "id": "homer",  "name": "Homer Simpson",  "icon": "🍩", "color": "#ffd90f" },
+    { "id": "marge",  "name": "Marge Simpson",  "icon": "💙", "color": "#3fa9f5" },
+    { "id": "moe",    "name": "Moe Szyslak",    "icon": "🍸", "color": "#5c4033" },
+    { "id": "flanders","name": "Ned Flanders",  "icon": "🙏", "color": "#7cb342" },
+    { "id": "burns",  "name": "Mr. Burns",      "icon": "💰", "color": "#4a4a4a" },
+    { "id": "krusty", "name": "Krusty the Clown","icon": "🤡", "color": "#e8492f" }
+  ]
+}

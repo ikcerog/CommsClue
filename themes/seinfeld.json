@@ -1,0 +1,41 @@
+{
+  "id": "seinfeld",
+  "name": "Seinfeld",
+  "tagline": "A murder about nothing",
+  "colors": {
+    "board": "#161616",
+    "accent": "#e0392b",
+    "text": "#f5f0e6"
+  },
+  "rooms": [
+    { "id": "jerrys_apartment", "name": "Jerry's Apartment", "row": 1, "col": 1, "icon": "🏢" },
+    { "id": "monks_cafe",       "name": "Monk's Café",        "row": 1, "col": 2, "icon": "☕" },
+    { "id": "kramers_apartment","name": "Kramer's Apartment", "row": 1, "col": 3, "icon": "🚪" },
+    { "id": "soup_stand",       "name": "Soup Nazi's Stand",  "row": 2, "col": 1, "icon": "🍲" },
+    { "id": "yankee_stadium",   "name": "Yankee Stadium",     "row": 2, "col": 2, "icon": "⚾" },
+    { "id": "nbc_studios",      "name": "NBC Studios",        "row": 2, "col": 3, "icon": "📺" },
+    { "id": "vandelay",         "name": "Vandelay Industries","row": 3, "col": 1, "icon": "🏭" },
+    { "id": "comedy_club",      "name": "Comedy Club Stage",  "row": 3, "col": 2, "icon": "🎤" },
+    { "id": "subway",           "name": "The Subway",         "row": 3, "col": 3, "icon": "🚇" }
+  ],
+  "passages": [
+    ["jerrys_apartment", "vandelay"],
+    ["kramers_apartment", "comedy_club"]
+  ],
+  "weapons": [
+    { "id": "marble_rye",  "name": "Marble Rye",        "icon": "🍞" },
+    { "id": "puffy_shirt", "name": "The Puffy Shirt",   "icon": "👔" },
+    { "id": "cuban_cigars","name": "Cuban Cigars",      "icon": "🚬" },
+    { "id": "peterman_wallet","name": "J. Peterman Wallet", "icon": "👛" },
+    { "id": "big_salad",   "name": "The Big Salad",     "icon": "🥗" },
+    { "id": "armoire",     "name": "The Armoire",       "icon": "🗄️" }
+  ],
+  "suspects": [
+    { "id": "jerry",  "name": "Jerry Seinfeld",   "icon": "🎤", "color": "#e0392b" },
+    { "id": "george", "name": "George Costanza",  "icon": "😩", "color": "#4a4a4a" },
+    { "id": "elaine", "name": "Elaine Benes",     "icon": "💃", "color": "#c9962c" },
+    { "id": "kramer", "name": "Cosmo Kramer",     "icon": "🚪", "color": "#6a4c93" },
+    { "id": "newman", "name": "Newman",           "icon": "📬", "color": "#3f7d4f" },
+    { "id": "soup_nazi","name": "The Soup Nazi",  "icon": "🥣", "color": "#2f5aa8" }
+  ]
+}
