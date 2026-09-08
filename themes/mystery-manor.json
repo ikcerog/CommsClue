@@ -8,15 +8,15 @@
     "text": "#f5f0e6"
   },
   "rooms": [
-    { "id": "study",        "name": "Study",        "row": 1, "col": 1, "icon": "📚" },
-    { "id": "hall",         "name": "Hall",          "row": 1, "col": 2, "icon": "🚪" },
-    { "id": "lounge",       "name": "Lounge",        "row": 1, "col": 3, "icon": "🛋️" },
-    { "id": "library",      "name": "Library",       "row": 2, "col": 1, "icon": "📖" },
-    { "id": "billiard_room","name": "Billiard Room", "row": 2, "col": 2, "icon": "🎱" },
-    { "id": "dining_room",  "name": "Dining Room",   "row": 2, "col": 3, "icon": "🍽️" },
-    { "id": "conservatory", "name": "Conservatory",  "row": 3, "col": 1, "icon": "🌿" },
-    { "id": "ballroom",     "name": "Ballroom",      "row": 3, "col": 2, "icon": "💃" },
-    { "id": "kitchen",      "name": "Kitchen",       "row": 3, "col": 3, "icon": "🍳" }
+    { "id": "study",        "name": "Study",        "slot": "top_left",       "icon": "📚" },
+    { "id": "hall",         "name": "Hall",          "slot": "top_center",     "icon": "🚪" },
+    { "id": "lounge",       "name": "Lounge",        "slot": "top_right",      "icon": "🛋️" },
+    { "id": "library",      "name": "Library",       "slot": "mid_left_upper","icon": "📖" },
+    { "id": "billiard_room","name": "Billiard Room", "slot": "mid_left_lower","icon": "🎱" },
+    { "id": "dining_room",  "name": "Dining Room",   "slot": "mid_right",      "icon": "🍽️" },
+    { "id": "conservatory", "name": "Conservatory",  "slot": "bottom_left",    "icon": "🌿" },
+    { "id": "ballroom",     "name": "Ballroom",      "slot": "bottom_center",  "icon": "💃" },
+    { "id": "kitchen",      "name": "Kitchen",       "slot": "bottom_right",   "icon": "🍳" }
   ],
   "passages": [
     ["study", "kitchen"],

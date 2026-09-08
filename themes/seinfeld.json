@@ -8,19 +8,19 @@
     "text": "#f5f0e6"
   },
   "rooms": [
-    { "id": "jerrys_apartment", "name": "Jerry's Apartment", "row": 1, "col": 1, "icon": "🏢" },
-    { "id": "monks_cafe",       "name": "Monk's Café",        "row": 1, "col": 2, "icon": "☕" },
-    { "id": "kramers_apartment","name": "Kramer's Apartment", "row": 1, "col": 3, "icon": "🚪" },
-    { "id": "soup_stand",       "name": "The Soup Stand",     "row": 2, "col": 1, "icon": "🍲" },
-    { "id": "yankee_stadium",   "name": "Yankee Stadium",     "row": 2, "col": 2, "icon": "⚾" },
-    { "id": "nbc_studios",      "name": "NBC Studios",        "row": 2, "col": 3, "icon": "📺" },
-    { "id": "vandelay",         "name": "Vandelay Industries","row": 3, "col": 1, "icon": "🏭" },
-    { "id": "comedy_club",      "name": "Comedy Club Stage",  "row": 3, "col": 2, "icon": "🎤" },
-    { "id": "subway",           "name": "The Subway",         "row": 3, "col": 3, "icon": "🚇" }
+    { "id": "jerrys_apartment", "name": "Jerry's Apartment", "slot": "top_left",       "icon": "🏢" },
+    { "id": "monks_cafe",       "name": "Monk's Café",        "slot": "top_center",     "icon": "☕" },
+    { "id": "kramers_apartment","name": "Kramer's Apartment", "slot": "top_right",      "icon": "🚪" },
+    { "id": "soup_stand",       "name": "The Soup Stand",     "slot": "mid_left_upper", "icon": "🍲" },
+    { "id": "yankee_stadium",   "name": "Yankee Stadium",     "slot": "mid_left_lower", "icon": "⚾" },
+    { "id": "nbc_studios",      "name": "NBC Studios",        "slot": "mid_right",      "icon": "📺" },
+    { "id": "vandelay",         "name": "Vandelay Industries","slot": "bottom_left",    "icon": "🏭" },
+    { "id": "comedy_club",      "name": "Comedy Club Stage",  "slot": "bottom_center",  "icon": "🎤" },
+    { "id": "subway",           "name": "The Subway",         "slot": "bottom_right",   "icon": "🚇" }
   ],
   "passages": [
-    ["jerrys_apartment", "vandelay"],
-    ["kramers_apartment", "comedy_club"]
+    ["jerrys_apartment", "subway"],
+    ["kramers_apartment", "vandelay"]
   ],
   "weapons": [
     { "id": "marble_rye",  "name": "Marble Rye",        "icon": "🍞" },

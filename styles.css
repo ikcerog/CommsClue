@@ -76,13 +76,17 @@ body {
 
 .board {
   display: grid;
-  grid-template-columns: 2fr 0.5fr 2fr 0.5fr 2fr;
-  grid-template-rows: 2fr 0.5fr 2fr 0.5fr 2fr;
-  gap: 0.3rem;
-  aspect-ratio: 1 / 1;
-  background: var(--board);
+  aspect-ratio: var(--grid-cols, 22) / var(--grid-rows, 25);
+  background-color: #d9a62b;
+  background-image:
+    linear-gradient(to right, rgba(0, 0, 0, 0.16) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.16) 1px, transparent 1px);
+  background-size:
+    calc(100% / var(--grid-cols, 22)) 100%,
+    100% calc(100% / var(--grid-rows, 25));
+  border: 6px solid #5c7a52;
   border-radius: 8px;
-  padding: 0.6rem;
+  padding: 0;
 }
 
 .room {
@@ -164,14 +168,18 @@ body {
   50% { box-shadow: 0 0 0 4px rgba(255, 255, 255, 0); }
 }
 
-.hallway {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px dashed rgba(255, 255, 255, 0.15);
-  border-radius: 3px;
-}
-
-.wall {
-  background: transparent;
+.cellar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--board);
+  border: 2px solid var(--accent);
+  border-radius: 6px;
+  color: var(--accent);
+  font-weight: bold;
+  text-align: center;
+  padding: 0.5rem;
+  font-size: clamp(0.7rem, 1.6vw, 1.1rem);
 }
 
 .controls {

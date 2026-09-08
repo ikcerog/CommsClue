@@ -17,6 +17,29 @@ const DIE_PATTERNS = {
 
 const MAX_DICE_HISTORY = 6;
 
+// Fixed board geometry, modeled after the real Clue board's proportions:
+// two stacked rooms on the left-middle (Library/Billiard Room), one tall
+// room on the right-middle (Dining Room), and a non-interactive center
+// "Cellar" block, all on a fine movement grid so corridors get many
+// individual squares instead of one hallway cell per connection. This
+// shape is the same for every theme — only room names/icons/colors change.
+const GRID_COLS = 22;
+const GRID_ROWS = 25;
+
+const SLOTS = {
+  top_left:        { col: 1,  colSpan: 6, row: 1,  rowSpan: 5 },
+  top_center:      { col: 9,  colSpan: 6, row: 1,  rowSpan: 5 },
+  top_right:       { col: 17, colSpan: 6, row: 1,  rowSpan: 5 },
+  mid_left_upper:  { col: 1,  colSpan: 6, row: 8,  rowSpan: 5 },
+  mid_left_lower:  { col: 1,  colSpan: 6, row: 14, rowSpan: 5 },
+  mid_right:       { col: 17, colSpan: 6, row: 8,  rowSpan: 11 },
+  bottom_left:     { col: 1,  colSpan: 6, row: 21, rowSpan: 5 },
+  bottom_center:   { col: 9,  colSpan: 6, row: 21, rowSpan: 5 },
+  bottom_right:    { col: 17, colSpan: 6, row: 21, rowSpan: 5 },
+};
+
+const CENTER_SLOT = { col: 9, colSpan: 6, row: 8, rowSpan: 11 };
+
 let currentTheme = null;
 let rollInFlight = false;
 
@@ -69,17 +92,26 @@ function announce(message) {
   if (el) el.textContent = message;
 }
 
-// Rooms sit on a 3x3 logical grid; on screen that becomes a 5x5 grid where
-// the cells between adjacent rooms are hallway squares (room at row r, col c
-// -> screen row/col 2r-1, 2c-1). Screen cells where both coordinates are even
-// are unused corner "wall" filler.
+function applySlot(el, slot) {
+  el.style.gridColumn = `${slot.col} / span ${slot.colSpan}`;
+  el.style.gridRow = `${slot.row} / span ${slot.rowSpan}`;
+}
+
+// Rooms are placed on a fine corridor grid (see SLOTS above) instead of one
+// cell per room — the corridor area between/around them is real walkable
+// square footage, drawn as a graph-paper background rather than individual
+// DOM cells (there's nothing to click between rooms yet, so this keeps the
+// DOM light while still looking like a real multi-square corridor).
 function renderBoard(theme, session) {
   const board = document.getElementById("board");
   board.innerHTML = "";
   board.style.setProperty("--accent", theme.colors.accent);
+  board.style.setProperty("--grid-cols", GRID_COLS);
+  board.style.setProperty("--grid-rows", GRID_ROWS);
+  board.style.gridTemplateColumns = `repeat(${GRID_COLS}, 1fr)`;
+  board.style.gridTemplateRows = `repeat(${GRID_ROWS}, 1fr)`;
 
   const passageRooms = new Set((theme.passages || []).flat());
-  const roomsByPos = new Map(theme.rooms.map((r) => [`${r.row},${r.col}`, r]));
   const tokensByRoom = new Map();
   theme.suspects.forEach((s) => {
     if (!s.start) return;
@@ -87,61 +119,55 @@ function renderBoard(theme, session) {
     tokensByRoom.get(s.start).push(s);
   });
 
-  for (let screenRow = 1; screenRow <= 5; screenRow++) {
-    for (let screenCol = 1; screenCol <= 5; screenCol++) {
-      const rowIsRoom = screenRow % 2 === 1;
-      const colIsRoom = screenCol % 2 === 1;
-      const cell = document.createElement("div");
-      cell.style.gridRow = screenRow;
-      cell.style.gridColumn = screenCol;
+  const center = document.createElement("div");
+  center.className = "cellar";
+  applySlot(center, CENTER_SLOT);
+  center.innerHTML = `<span class="cellar-label">${theme.name}</span>`;
+  board.appendChild(center);
 
-      if (rowIsRoom && colIsRoom) {
-        const room = roomsByPos.get(`${(screenRow + 1) / 2},${(screenCol + 1) / 2}`);
-        if (!room) continue;
-        const isSelected = session.selectedRoom === room.id;
-        cell.className = "room" + (passageRooms.has(room.id) ? " passage" : "") + (isSelected ? " selected" : "");
-        cell.setAttribute("role", "button");
-        cell.setAttribute("tabindex", "0");
-        cell.setAttribute("aria-pressed", String(isSelected));
-        cell.innerHTML = `<span class="icon">${room.icon || ""}</span><span>${room.name}</span>`;
+  theme.rooms.forEach((room) => {
+    const slot = SLOTS[room.slot];
+    if (!slot) return;
+    const cell = document.createElement("div");
+    const isSelected = session.selectedRoom === room.id;
+    cell.className = "room" + (passageRooms.has(room.id) ? " passage" : "") + (isSelected ? " selected" : "");
+    applySlot(cell, slot);
+    cell.setAttribute("role", "button");
+    cell.setAttribute("tabindex", "0");
+    cell.setAttribute("aria-pressed", String(isSelected));
+    cell.innerHTML = `<span class="icon">${room.icon || ""}</span><span>${room.name}</span>`;
 
-        const selectRoom = () => {
-          session.selectedRoom = session.selectedRoom === room.id ? null : room.id;
-          saveSessionState(theme.id, session);
-          renderBoard(theme, session);
-          if (session.selectedRoom) announce(`Selected ${room.name}`);
-        };
-        cell.addEventListener("click", selectRoom);
-        cell.addEventListener("keydown", (e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            selectRoom();
-          }
-        });
-
-        const tokens = tokensByRoom.get(room.id) || [];
-        if (tokens.length) {
-          const tokenWrap = document.createElement("div");
-          tokenWrap.className = "room-tokens";
-          tokens.forEach((s) => {
-            const t = document.createElement("span");
-            t.className = "token" + (session.turn === s.id ? " active" : "");
-            t.title = s.name;
-            t.style.background = s.color || "#888";
-            t.textContent = s.icon || "";
-            tokenWrap.appendChild(t);
-          });
-          cell.appendChild(tokenWrap);
-        }
-      } else if (rowIsRoom !== colIsRoom) {
-        cell.className = "hallway";
-      } else {
-        cell.className = "wall";
+    const selectRoom = () => {
+      session.selectedRoom = session.selectedRoom === room.id ? null : room.id;
+      saveSessionState(theme.id, session);
+      renderBoard(theme, session);
+      if (session.selectedRoom) announce(`Selected ${room.name}`);
+    };
+    cell.addEventListener("click", selectRoom);
+    cell.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        selectRoom();
       }
+    });
 
-      board.appendChild(cell);
+    const tokens = tokensByRoom.get(room.id) || [];
+    if (tokens.length) {
+      const tokenWrap = document.createElement("div");
+      tokenWrap.className = "room-tokens";
+      tokens.forEach((s) => {
+        const t = document.createElement("span");
+        t.className = "token" + (session.turn === s.id ? " active" : "");
+        t.title = s.name;
+        t.style.background = s.color || "#888";
+        t.textContent = s.icon || "";
+        tokenWrap.appendChild(t);
+      });
+      cell.appendChild(tokenWrap);
     }
-  }
+
+    board.appendChild(cell);
+  });
 }
 
 function renderSheet(theme) {

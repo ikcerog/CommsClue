@@ -14,8 +14,8 @@ you swap in a different brand, show, or IP without touching the game engine.
     "text": "#f5f0e6"
   },
   "rooms": [
-    // 9 rooms, positioned on a 3x3 grid via row/col (1-3, 1-3)
-    { "id": "study", "name": "Study", "row": 1, "col": 1, "icon": "📚" }
+    // exactly one room per fixed board "slot" (see below)
+    { "id": "study", "name": "Study", "slot": "top_left", "icon": "📚" }
     // ...
   ],
   "passages": [
@@ -46,10 +46,20 @@ you swap in a different brand, show, or IP without touching the game engine.
   doesn't assume 6 and 6.
 - Every `id` must be unique within its own list (room ids, weapon ids,
   suspect ids) — they're used as localStorage keys for the deduction sheet.
-- The board renders rooms + hallways on a 5x5 grid (room at grid position
-  `2*row-1, 2*col-1`; the cells between adjacent rooms become hallway
-  squares automatically). `passages` still connects any two rooms directly
-  regardless of grid distance.
+- The board's physical shape is fixed engine-side (`SLOTS` in `app.js`),
+  modeled on the real Clue board's proportions: three rooms across the top,
+  three across the bottom, two rooms stacked on the left-middle, one tall
+  room on the right-middle, and a non-interactive center "Cellar" block.
+  Each theme's 9 rooms map one-to-one onto these 9 slot names — `top_left`,
+  `top_center`, `top_right`, `mid_left_upper`, `mid_left_lower`, `mid_right`,
+  `bottom_left`, `bottom_center`, `bottom_right` — via each room's `slot`
+  field. The space between/around the rooms renders as a fine corridor grid
+  (22x25 squares) rather than one hallway cell per connection, so movement
+  distance actually means something. A theme can't add/remove rooms or
+  change the board shape — that's an engine change, not a theme one.
+- `passages` conventionally connects diagonal corner pairs (`top_left` ↔
+  `bottom_right`, `top_right` ↔ `bottom_left`), matching the real board's
+  two secret passages.
 - Each suspect's `start` should be a distinct room id (their token's
   starting square). Movement/turn logic isn't built yet — tokens just render
   in their start room for now.

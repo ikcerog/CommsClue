@@ -8,15 +8,15 @@
     "text": "#fff6da"
   },
   "rooms": [
-    { "id": "kwik_e_mart",   "name": "Kwik-E-Mart",             "row": 1, "col": 1, "icon": "🏪" },
-    { "id": "moes_tavern",   "name": "Moe's Tavern",            "row": 1, "col": 2, "icon": "🍺" },
-    { "id": "power_plant",   "name": "Nuclear Power Plant",     "row": 1, "col": 3, "icon": "☢️" },
-    { "id": "elementary",    "name": "Springfield Elementary",  "row": 2, "col": 1, "icon": "🏫" },
-    { "id": "simpson_house", "name": "Simpson House",           "row": 2, "col": 2, "icon": "🏠" },
-    { "id": "krusty_burger", "name": "Krusty Burger",           "row": 2, "col": 3, "icon": "🍔" },
-    { "id": "church",        "name": "First Church of Springfield", "row": 3, "col": 1, "icon": "⛪" },
-    { "id": "park",          "name": "Springfield Park",        "row": 3, "col": 2, "icon": "🌳" },
-    { "id": "duff_brewery",  "name": "Duff Brewery",            "row": 3, "col": 3, "icon": "🍻" }
+    { "id": "kwik_e_mart",   "name": "Kwik-E-Mart",             "slot": "top_left",        "icon": "🏪" },
+    { "id": "moes_tavern",   "name": "Moe's Tavern",            "slot": "top_center",      "icon": "🍺" },
+    { "id": "power_plant",   "name": "Nuclear Power Plant",     "slot": "top_right",       "icon": "☢️" },
+    { "id": "elementary",    "name": "Springfield Elementary",  "slot": "mid_left_upper",  "icon": "🏫" },
+    { "id": "simpson_house", "name": "Simpson House",           "slot": "mid_left_lower",  "icon": "🏠" },
+    { "id": "krusty_burger", "name": "Krusty Burger",           "slot": "mid_right",       "icon": "🍔" },
+    { "id": "church",        "name": "First Church of Springfield", "slot": "bottom_left",  "icon": "⛪" },
+    { "id": "park",          "name": "Springfield Park",        "slot": "bottom_center",   "icon": "🌳" },
+    { "id": "duff_brewery",  "name": "Duff Brewery",            "slot": "bottom_right",    "icon": "🍻" }
   ],
   "passages": [
     ["kwik_e_mart", "duff_brewery"],
