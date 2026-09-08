@@ -31,11 +31,11 @@
     { "id": "armoire",     "name": "The Armoire",       "icon": "🗄️" }
   ],
   "suspects": [
-    { "id": "jerry",  "name": "Jerry Seinfeld",   "icon": "🎤", "color": "#e0392b" },
-    { "id": "george", "name": "George Costanza",  "icon": "😩", "color": "#4a4a4a" },
-    { "id": "elaine", "name": "Elaine Benes",     "icon": "💃", "color": "#c9962c" },
-    { "id": "kramer", "name": "Cosmo Kramer",     "icon": "🚪", "color": "#6a4c93" },
-    { "id": "newman", "name": "Newman",           "icon": "📬", "color": "#3f7d4f" },
-    { "id": "soup_nazi","name": "The Soup Nazi",  "icon": "🥣", "color": "#2f5aa8" }
+    { "id": "jerry",  "name": "Jerry Seinfeld",   "icon": "🎤", "color": "#e0392b", "start": "jerrys_apartment" },
+    { "id": "george", "name": "George Costanza",  "icon": "😩", "color": "#4a4a4a", "start": "vandelay" },
+    { "id": "elaine", "name": "Elaine Benes",     "icon": "💃", "color": "#c9962c", "start": "subway" },
+    { "id": "kramer", "name": "Cosmo Kramer",     "icon": "🚪", "color": "#6a4c93", "start": "kramers_apartment" },
+    { "id": "newman", "name": "Newman",           "icon": "📬", "color": "#3f7d4f", "start": "nbc_studios" },
+    { "id": "soup_nazi","name": "The Soup Nazi",  "icon": "🥣", "color": "#2f5aa8", "start": "soup_stand" }
   ]
 }

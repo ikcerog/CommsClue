@@ -33,21 +33,61 @@ function saveSheetState(themeId, state) {
   localStorage.setItem(sheetStorageKey(themeId), JSON.stringify(state));
 }
 
+// Rooms sit on a 3x3 logical grid; on screen that becomes a 5x5 grid where
+// the cells between adjacent rooms are hallway squares (room at row r, col c
+// -> screen row/col 2r-1, 2c-1). Screen cells where both coordinates are even
+// are unused corner "wall" filler.
 function renderBoard(theme) {
   const board = document.getElementById("board");
   board.innerHTML = "";
   board.style.setProperty("--accent", theme.colors.accent);
 
   const passageRooms = new Set((theme.passages || []).flat());
-
-  theme.rooms.forEach((room) => {
-    const cell = document.createElement("div");
-    cell.className = "room" + (passageRooms.has(room.id) ? " passage" : "");
-    cell.style.gridRow = room.row;
-    cell.style.gridColumn = room.col;
-    cell.innerHTML = `<span class="icon">${room.icon || ""}</span><span>${room.name}</span>`;
-    board.appendChild(cell);
+  const roomsByPos = new Map(theme.rooms.map((r) => [`${r.row},${r.col}`, r]));
+  const tokensByRoom = new Map();
+  theme.suspects.forEach((s) => {
+    if (!s.start) return;
+    if (!tokensByRoom.has(s.start)) tokensByRoom.set(s.start, []);
+    tokensByRoom.get(s.start).push(s);
   });
+
+  for (let screenRow = 1; screenRow <= 5; screenRow++) {
+    for (let screenCol = 1; screenCol <= 5; screenCol++) {
+      const rowIsRoom = screenRow % 2 === 1;
+      const colIsRoom = screenCol % 2 === 1;
+      const cell = document.createElement("div");
+      cell.style.gridRow = screenRow;
+      cell.style.gridColumn = screenCol;
+
+      if (rowIsRoom && colIsRoom) {
+        const room = roomsByPos.get(`${(screenRow + 1) / 2},${(screenCol + 1) / 2}`);
+        if (!room) continue;
+        cell.className = "room" + (passageRooms.has(room.id) ? " passage" : "");
+        cell.innerHTML = `<span class="icon">${room.icon || ""}</span><span>${room.name}</span>`;
+
+        const tokens = tokensByRoom.get(room.id) || [];
+        if (tokens.length) {
+          const tokenWrap = document.createElement("div");
+          tokenWrap.className = "room-tokens";
+          tokens.forEach((s) => {
+            const t = document.createElement("span");
+            t.className = "token";
+            t.title = s.name;
+            t.style.background = s.color || "#888";
+            t.textContent = s.icon || "";
+            tokenWrap.appendChild(t);
+          });
+          cell.appendChild(tokenWrap);
+        }
+      } else if (rowIsRoom !== colIsRoom) {
+        cell.className = "hallway";
+      } else {
+        cell.className = "wall";
+      }
+
+      board.appendChild(cell);
+    }
+  }
 }
 
 function renderSheet(theme) {
@@ -93,6 +133,26 @@ function renderSheet(theme) {
   });
 }
 
+function wireDice() {
+  const button = document.getElementById("roll-dice");
+  const face = document.getElementById("die-face");
+  button.onclick = () => {
+    const roll = Math.floor(Math.random() * 6) + 1;
+    face.textContent = roll;
+  };
+}
+
+function wireTurnTracker(theme) {
+  const select = document.getElementById("turn-select");
+  select.innerHTML = "";
+  theme.suspects.forEach((s) => {
+    const opt = document.createElement("option");
+    opt.value = s.id;
+    opt.textContent = `${s.icon || ""} ${s.name}`;
+    select.appendChild(opt);
+  });
+}
+
 function wireClearButton(theme) {
   document.getElementById("clear-sheet").addEventListener("click", () => {
     if (!confirm("Clear your detective sheet for this theme? This can't be undone.")) return;
@@ -107,6 +167,8 @@ async function selectTheme(themeId) {
   renderBoard(currentTheme);
   renderSheet(currentTheme);
   wireClearButton(currentTheme);
+  wireDice();
+  wireTurnTracker(currentTheme);
   localStorage.setItem("commsclue.lastTheme", themeId);
 }
 

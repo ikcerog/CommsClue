@@ -66,9 +66,9 @@ body {
 
 .board {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(3, 1fr);
-  gap: 0.6rem;
+  grid-template-columns: 2fr 0.5fr 2fr 0.5fr 2fr;
+  grid-template-rows: 2fr 0.5fr 2fr 0.5fr 2fr;
+  gap: 0.3rem;
   aspect-ratio: 1 / 1;
   background: var(--board);
   border-radius: 8px;
@@ -85,19 +85,95 @@ body {
   border: 2px solid var(--accent);
   border-radius: 6px;
   background: rgba(255, 255, 255, 0.03);
-  font-size: 0.85rem;
+  font-size: clamp(0.6rem, 1.4vw, 0.85rem);
   text-align: center;
-  padding: 0.4rem;
+  padding: 0.3rem;
+  overflow: hidden;
 }
 
-.room .icon { font-size: 1.6rem; }
+.room .icon { font-size: clamp(1rem, 3vw, 1.6rem); }
 
 .room.passage::after {
-  content: "↔ secret passage";
+  content: "↔";
   position: absolute;
   bottom: 2px;
-  font-size: 0.6rem;
+  right: 4px;
+  font-size: 0.7rem;
   opacity: 0.7;
+}
+
+.room .room-tokens {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.15rem;
+  margin-top: 0.15rem;
+}
+
+.token {
+  width: clamp(0.9rem, 2vw, 1.3rem);
+  height: clamp(0.9rem, 2vw, 1.3rem);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(0.55rem, 1.4vw, 0.8rem);
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  flex-shrink: 0;
+}
+
+.hallway {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+}
+
+.wall {
+  background: transparent;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.dice {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.die-face {
+  width: 2.4rem;
+  height: 2.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--accent);
+  border-radius: 6px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.dice button, .turn-tracker select {
+  padding: 0.4rem 0.7rem;
+  border-radius: 6px;
+  border: 1px solid var(--accent);
+  background: var(--bg);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.turn-tracker {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
 }
 
 .sheet-header {

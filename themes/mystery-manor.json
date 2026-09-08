@@ -31,11 +31,11 @@
     { "id": "wrench",      "name": "Wrench",       "icon": "🔩" }
   ],
   "suspects": [
-    { "id": "scarlett", "name": "Ms. Scarlett",   "icon": "🔴", "color": "#b5333a" },
-    { "id": "mustard",  "name": "Colonel Mustard","icon": "🟡", "color": "#c9962c" },
-    { "id": "orchid",   "name": "Mrs. Orchid",    "icon": "⚪",       "color": "#e7e2d6" },
-    { "id": "green",    "name": "Mr. Green",      "icon": "🟢", "color": "#3f7d4f" },
-    { "id": "peacock",  "name": "Mrs. Peacock",   "icon": "🔵", "color": "#2f5aa8" },
-    { "id": "plum",     "name": "Professor Plum", "icon": "🟣", "color": "#6a4c93" }
+    { "id": "scarlett", "name": "Ms. Scarlett",   "icon": "🔴", "color": "#b5333a", "start": "lounge" },
+    { "id": "mustard",  "name": "Colonel Mustard","icon": "🟡", "color": "#c9962c", "start": "kitchen" },
+    { "id": "orchid",   "name": "Mrs. Orchid",    "icon": "⚪",       "color": "#e7e2d6", "start": "study" },
+    { "id": "green",    "name": "Mr. Green",      "icon": "🟢", "color": "#3f7d4f", "start": "conservatory" },
+    { "id": "peacock",  "name": "Mrs. Peacock",   "icon": "🔵", "color": "#2f5aa8", "start": "dining_room" },
+    { "id": "plum",     "name": "Professor Plum", "icon": "🟣", "color": "#6a4c93", "start": "hall" }
   ]
 }

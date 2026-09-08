@@ -28,7 +28,8 @@ you swap in a different brand, show, or IP without touching the game engine.
     // ...
   ],
   "suspects": [
-    { "id": "scarlett", "name": "Ms. Scarlett", "icon": "🔴", "color": "#b5333a" }
+    // "start" is the room id this suspect's token begins the game in
+    { "id": "scarlett", "name": "Ms. Scarlett", "icon": "🔴", "color": "#b5333a", "start": "lounge" }
     // ...
   ]
 }
@@ -45,6 +46,13 @@ you swap in a different brand, show, or IP without touching the game engine.
   doesn't assume 6 and 6.
 - Every `id` must be unique within its own list (room ids, weapon ids,
   suspect ids) — they're used as localStorage keys for the deduction sheet.
+- The board renders rooms + hallways on a 5x5 grid (room at grid position
+  `2*row-1, 2*col-1`; the cells between adjacent rooms become hallway
+  squares automatically). `passages` still connects any two rooms directly
+  regardless of grid distance.
+- Each suspect's `start` should be a distinct room id (their token's
+  starting square). Movement/turn logic isn't built yet — tokens just render
+  in their start room for now.
 
 To add a brand overlay: copy `mystery-manor.json`, rename the file and `id`,
 swap names/icons/colors, keep the same shape, then add its id to

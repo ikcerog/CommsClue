@@ -31,11 +31,11 @@
     { "id": "cane",          "name": "Mr. Burns' Cane",   "icon": "🦯" }
   ],
   "suspects": [
-    { "id": "homer",  "name": "Homer Simpson",  "icon": "🍩", "color": "#ffd90f" },
-    { "id": "marge",  "name": "Marge Simpson",  "icon": "💙", "color": "#3fa9f5" },
-    { "id": "moe",    "name": "Moe Szyslak",    "icon": "🍸", "color": "#5c4033" },
-    { "id": "flanders","name": "Ned Flanders",  "icon": "🙏", "color": "#7cb342" },
-    { "id": "burns",  "name": "Mr. Burns",      "icon": "💰", "color": "#4a4a4a" },
-    { "id": "krusty", "name": "Krusty the Clown","icon": "🤡", "color": "#e8492f" }
+    { "id": "homer",  "name": "Homer Simpson",  "icon": "🍩", "color": "#ffd90f", "start": "kwik_e_mart" },
+    { "id": "marge",  "name": "Marge Simpson",  "icon": "💙", "color": "#3fa9f5", "start": "simpson_house" },
+    { "id": "moe",    "name": "Moe Szyslak",    "icon": "🍸", "color": "#5c4033", "start": "moes_tavern" },
+    { "id": "flanders","name": "Ned Flanders",  "icon": "🙏", "color": "#7cb342", "start": "church" },
+    { "id": "burns",  "name": "Mr. Burns",      "icon": "💰", "color": "#4a4a4a", "start": "power_plant" },
+    { "id": "krusty", "name": "Krusty the Clown","icon": "🤡", "color": "#e8492f", "start": "krusty_burger" }
   ]
 }
