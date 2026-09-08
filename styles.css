@@ -286,6 +286,86 @@ body {
 
 .link-button:hover { filter: brightness(1.2); }
 
+.live-panel {
+  max-width: 1200px;
+  margin: 0 auto 1.5rem;
+  padding: 1rem 1.5rem;
+  background: var(--panel);
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+.live-panel h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0;
+}
+
+.live-status {
+  font-size: 0.75rem;
+  font-weight: normal;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--accent);
+}
+
+.live-setup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+.live-setup label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+}
+
+.live-setup input,
+.live-setup select {
+  padding: 0.4rem 0.5rem;
+  border-radius: 6px;
+  border: 1px solid var(--accent);
+  background: var(--bg);
+  color: var(--text);
+}
+
+.live-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.live-buttons button,
+.live-active .dice button {
+  padding: 0.4rem 0.9rem;
+  border-radius: 6px;
+  border: 1px solid var(--accent);
+  background: var(--bg);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.live-active .dice button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.live-active code {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+}
+
+#live-players {
+  margin: 0;
+  padding-left: 1.2rem;
+  font-size: 0.85rem;
+}
+
 .sheet-header {
   display: flex;
   align-items: center;

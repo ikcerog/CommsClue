@@ -102,7 +102,7 @@ function applySlot(el, slot) {
 // square footage, drawn as a graph-paper background rather than individual
 // DOM cells (there's nothing to click between rooms yet, so this keeps the
 // DOM light while still looking like a real multi-square corridor).
-function renderBoard(theme, session) {
+function renderBoard(theme, session, onRoomClick) {
   const board = document.getElementById("board");
   board.innerHTML = "";
   board.style.setProperty("--accent", theme.colors.accent);
@@ -138,6 +138,10 @@ function renderBoard(theme, session) {
     cell.innerHTML = `<span class="icon">${room.icon || ""}</span><span>${room.name}</span>`;
 
     const selectRoom = () => {
+      if (onRoomClick) {
+        onRoomClick(room.id);
+        return;
+      }
       session.selectedRoom = session.selectedRoom === room.id ? null : room.id;
       saveSessionState(theme.id, session);
       renderBoard(theme, session);
@@ -222,8 +226,8 @@ function renderSheet(theme) {
   });
 }
 
-function renderDie(value) {
-  const face = document.getElementById("die-face");
+function renderDie(value, elementId = "die-face") {
+  const face = document.getElementById(elementId);
   face.innerHTML = "";
   face.dataset.value = value;
   const active = new Set(DIE_PATTERNS[value] || []);
@@ -336,6 +340,181 @@ async function selectTheme(themeId) {
   localStorage.setItem("commsclue.lastTheme", themeId);
 }
 
+// ===== Live multiplayer (Cloudflare Worker) =====
+// Connects to the GameRoom Durable Object over WebSocket. This shares the
+// same #board element as the local sandbox above — while connected, the
+// board reflects the live game's state instead of your local practice
+// session, and the sandbox controls are disabled to avoid the two fighting
+// over the same view.
+
+let liveSocket = null;
+let livePlayerId = null;
+let liveGameState = null;
+let liveHand = null;
+
+function wsUrlFor(baseUrl, gameId, name) {
+  return `${baseUrl.replace(/\/$/, "")}/game/${encodeURIComponent(gameId)}?name=${encodeURIComponent(name)}`;
+}
+
+function httpUrlFor(baseUrl) {
+  return baseUrl.replace(/^ws/, "http").replace(/\/$/, "");
+}
+
+function randomGameId() {
+  return Math.random().toString(36).slice(2, 10);
+}
+
+function setLiveStatus(text) {
+  document.getElementById("live-status").textContent = text;
+}
+
+function setLocalControlsEnabled(enabled) {
+  ["theme-select", "roll-dice", "turn-select", "reset-session"].forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) el.disabled = !enabled;
+  });
+}
+
+async function createLiveGame() {
+  const baseUrl = document.getElementById("live-url").value.trim();
+  const name = document.getElementById("live-name").value.trim() || "Player";
+  const playerCount = Number(document.getElementById("live-player-count").value);
+  const gameId = randomGameId();
+  document.getElementById("live-game-id").value = gameId;
+
+  const categories = {
+    suspects: currentTheme.suspects.map((s) => s.id),
+    weapons: currentTheme.weapons.map((w) => w.id),
+    rooms: currentTheme.rooms.map((r) => r.id),
+  };
+
+  setLiveStatus("Creating game…");
+  try {
+    const res = await fetch(`${httpUrlFor(baseUrl)}/game/${gameId}/create`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ theme: currentTheme.id, playerCount, categories }),
+    });
+    if (!res.ok) throw new Error(`server responded ${res.status}`);
+    connectLiveSocket(baseUrl, gameId, name);
+  } catch (err) {
+    setLiveStatus(`Failed to create game: ${err.message}`);
+  }
+}
+
+function joinLiveGame() {
+  const baseUrl = document.getElementById("live-url").value.trim();
+  const name = document.getElementById("live-name").value.trim() || "Player";
+  const gameId = document.getElementById("live-game-id").value.trim();
+  if (!gameId) {
+    setLiveStatus("Enter a Game ID to join.");
+    return;
+  }
+  connectLiveSocket(baseUrl, gameId, name);
+}
+
+function connectLiveSocket(baseUrl, gameId, name) {
+  if (liveSocket) liveSocket.close();
+  setLiveStatus("Connecting…");
+
+  const ws = new WebSocket(wsUrlFor(baseUrl, gameId, name));
+  liveSocket = ws;
+
+  ws.onopen = () => {
+    setLiveStatus(`Connected to ${gameId}`);
+    setLocalControlsEnabled(false);
+    document.getElementById("live-setup").hidden = true;
+    document.getElementById("live-active").hidden = false;
+    document.getElementById("live-active-id").textContent = gameId;
+  };
+
+  ws.onclose = () => disconnectLiveGame("Disconnected");
+  ws.onerror = () => disconnectLiveGame("Connection error");
+
+  ws.onmessage = (event) => {
+    const msg = JSON.parse(event.data);
+    if (msg.type === "welcome") {
+      livePlayerId = msg.playerId;
+    } else if (msg.type === "state") {
+      liveGameState = msg.game;
+      renderLiveUI();
+    } else if (msg.type === "hand") {
+      liveHand = msg.cards;
+      renderLiveHand();
+    } else if (msg.type === "error") {
+      setLiveStatus(`Error: ${msg.message}`);
+    }
+  };
+}
+
+function disconnectLiveGame(statusText) {
+  liveSocket = null;
+  livePlayerId = null;
+  liveGameState = null;
+  liveHand = null;
+  setLiveStatus(statusText || "Not connected");
+  setLocalControlsEnabled(true);
+  document.getElementById("live-setup").hidden = false;
+  document.getElementById("live-active").hidden = true;
+  if (currentTheme) renderBoard(currentTheme, loadSessionState(currentTheme.id));
+}
+
+function renderLiveUI() {
+  if (!liveGameState) return;
+
+  renderBoard(currentTheme, liveGameState, (roomId) => {
+    liveSocket?.send(JSON.stringify({ type: "selectRoom", roomId }));
+  });
+
+  renderDie(liveGameState.diceHistory[liveGameState.diceHistory.length - 1] || 1, "live-die-face");
+
+  const turnPlayer = liveGameState.players.find((p) => p.id === liveGameState.turn);
+  const isMyTurn = liveGameState.turn === livePlayerId;
+  document.getElementById("live-turn-line").textContent =
+    liveGameState.status === "waiting"
+      ? `Waiting for players (${liveGameState.players.length}/${liveGameState.playerCount})…`
+      : `Turn: ${turnPlayer?.name || "?"}${isMyTurn ? " (you)" : ""}`;
+
+  document.getElementById("live-roll-dice").disabled = !isMyTurn;
+  document.getElementById("live-end-turn").disabled = !isMyTurn;
+
+  const playersList = document.getElementById("live-players");
+  playersList.innerHTML = "";
+  liveGameState.players.forEach((p) => {
+    const li = document.createElement("li");
+    li.textContent = p.name + (p.id === liveGameState.turn ? " ⬅ turn" : "") + (p.id === livePlayerId ? " (you)" : "");
+    playersList.appendChild(li);
+  });
+}
+
+function findCardMeta(theme, category, id) {
+  return (theme[category] || []).find((item) => item.id === id);
+}
+
+function renderLiveHand() {
+  const wrap = document.getElementById("live-hand");
+  wrap.innerHTML = "";
+  (liveHand || []).forEach((card) => {
+    const meta = findCardMeta(currentTheme, card.category, card.id);
+    const el = document.createElement("div");
+    el.className = "sheet-item";
+    el.innerHTML = `<span>${meta?.icon || ""} ${meta?.name || card.id}</span>`;
+    wrap.appendChild(el);
+  });
+}
+
+function wireLiveGame() {
+  document.getElementById("live-create").addEventListener("click", createLiveGame);
+  document.getElementById("live-join").addEventListener("click", joinLiveGame);
+  document.getElementById("live-disconnect").addEventListener("click", () => liveSocket?.close());
+  document.getElementById("live-roll-dice").addEventListener("click", () => {
+    liveSocket?.send(JSON.stringify({ type: "roll" }));
+  });
+  document.getElementById("live-end-turn").addEventListener("click", () => {
+    liveSocket?.send(JSON.stringify({ type: "advanceTurn" }));
+  });
+}
+
 async function init() {
   const manifest = await loadManifest();
   const select = document.getElementById("theme-select");
@@ -354,6 +533,7 @@ async function init() {
 
   select.addEventListener("change", (e) => selectTheme(e.target.value));
 
+  wireLiveGame();
   await selectTheme(startTheme);
 }
 

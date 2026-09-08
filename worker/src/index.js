@@ -213,18 +213,40 @@ function shuffle(array) {
   return result;
 }
 
+// The frontend (GitHub Pages) and this Worker (workers.dev) are always
+// different origins, so every plain HTTP response needs CORS headers or the
+// browser silently blocks it — WebSocket upgrades aren't subject to CORS and
+// must be left untouched.
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type",
+};
+
 export default {
   async fetch(request, env) {
+    if (request.method === "OPTIONS") {
+      return new Response(null, { status: 204, headers: CORS_HEADERS });
+    }
+
     const url = new URL(request.url);
     const match = url.pathname.match(/^\/game\/([a-zA-Z0-9_-]+)/);
 
     if (!match) {
-      return new Response("CommsClue game server is running.", { status: 200 });
+      return new Response("CommsClue game server is running.", { status: 200, headers: CORS_HEADERS });
     }
 
     const gameId = match[1];
     const id = env.GAME_ROOM.idFromName(gameId);
     const stub = env.GAME_ROOM.get(id);
-    return stub.fetch(request);
+    const response = await stub.fetch(request);
+
+    if (request.headers.get("Upgrade") === "websocket") {
+      return response;
+    }
+
+    const headers = new Headers(response.headers);
+    for (const [key, value] of Object.entries(CORS_HEADERS)) headers.set(key, value);
+    return new Response(response.body, { status: response.status, headers });
   },
 };

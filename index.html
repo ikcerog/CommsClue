@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CommsClue</title>
-  <link rel="stylesheet" href="styles.css?v=20260908-1" />
+  <link rel="stylesheet" href="styles.css?v=20260908-2" />
 </head>
 <body>
   <header class="topbar">
@@ -49,6 +49,45 @@
     </section>
   </main>
 
-  <script src="app.js?v=20260908-1"></script>
+  <section class="live-panel">
+    <h2>Live Game <span id="live-status" class="live-status">Not connected</span></h2>
+    <p class="sheet-hint">While connected, the board above follows the live game instead of your local practice session.</p>
+
+    <div class="live-setup" id="live-setup">
+      <label>Server <input id="live-url" type="text" value="ws://localhost:8787" /></label>
+      <label>Your name <input id="live-name" type="text" placeholder="Your name" /></label>
+      <label>Game ID <input id="live-game-id" type="text" placeholder="e.g. u7sh3678x7" /></label>
+      <label>Players (new game)
+        <select id="live-player-count">
+          <option>2</option><option>3</option><option>4</option><option>5</option><option>6</option>
+        </select>
+      </label>
+      <div class="live-buttons">
+        <button id="live-create">Create New Game</button>
+        <button id="live-join">Join Game</button>
+      </div>
+    </div>
+
+    <div class="live-active" id="live-active" hidden>
+      <p>Game ID: <code id="live-active-id"></code> — share this so others can join. <button id="live-disconnect" class="link-button">Disconnect</button></p>
+      <p id="live-turn-line"></p>
+
+      <div class="dice">
+        <div id="live-die-face" class="die-face"></div>
+        <div class="dice-side">
+          <button id="live-roll-dice">Roll Dice</button>
+          <button id="live-end-turn">End Turn</button>
+        </div>
+      </div>
+
+      <h3>Your Hand</h3>
+      <div id="live-hand" class="sheet-items"></div>
+
+      <h3>Players</h3>
+      <ul id="live-players"></ul>
+    </div>
+  </section>
+
+  <script src="app.js?v=20260908-2"></script>
 </body>
 </html>
