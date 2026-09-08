@@ -11,7 +11,7 @@
     { "id": "jerrys_apartment", "name": "Jerry's Apartment", "row": 1, "col": 1, "icon": "🏢" },
     { "id": "monks_cafe",       "name": "Monk's Café",        "row": 1, "col": 2, "icon": "☕" },
     { "id": "kramers_apartment","name": "Kramer's Apartment", "row": 1, "col": 3, "icon": "🚪" },
-    { "id": "soup_stand",       "name": "Soup Nazi's Stand",  "row": 2, "col": 1, "icon": "🍲" },
+    { "id": "soup_stand",       "name": "The Soup Stand",     "row": 2, "col": 1, "icon": "🍲" },
     { "id": "yankee_stadium",   "name": "Yankee Stadium",     "row": 2, "col": 2, "icon": "⚾" },
     { "id": "nbc_studios",      "name": "NBC Studios",        "row": 2, "col": 3, "icon": "📺" },
     { "id": "vandelay",         "name": "Vandelay Industries","row": 3, "col": 1, "icon": "🏭" },
@@ -36,6 +36,6 @@
     { "id": "elaine", "name": "Elaine Benes",     "icon": "💃", "color": "#c9962c", "start": "subway" },
     { "id": "kramer", "name": "Cosmo Kramer",     "icon": "🚪", "color": "#6a4c93", "start": "kramers_apartment" },
     { "id": "newman", "name": "Newman",           "icon": "📬", "color": "#3f7d4f", "start": "nbc_studios" },
-    { "id": "soup_nazi","name": "The Soup Nazi",  "icon": "🥣", "color": "#2f5aa8", "start": "soup_stand" }
+    { "id": "puddy",  "name": "David Puddy",      "icon": "😎", "color": "#2f5aa8", "start": "monks_cafe" }
   ]
 }
