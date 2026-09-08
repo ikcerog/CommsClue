@@ -357,7 +357,7 @@ function wsUrlFor(baseUrl, gameId, name) {
 }
 
 function httpUrlFor(baseUrl) {
-  return baseUrl.replace(/^ws/, "http").replace(/\/$/, "");
+  return baseUrl.replace(/^wss:\/\//, "https://").replace(/^ws:\/\//, "http://").replace(/\/$/, "");
 }
 
 function randomGameId() {
