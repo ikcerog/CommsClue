@@ -1,0 +1,41 @@
+{
+  "id": "mystery-manor",
+  "name": "Mystery Manor",
+  "tagline": "A classic whodunit",
+  "colors": {
+    "board": "#1b1428",
+    "accent": "#c9a227",
+    "text": "#f5f0e6"
+  },
+  "rooms": [
+    { "id": "study",        "name": "Study",        "row": 1, "col": 1, "icon": "📚" },
+    { "id": "hall",         "name": "Hall",          "row": 1, "col": 2, "icon": "🚪" },
+    { "id": "lounge",       "name": "Lounge",        "row": 1, "col": 3, "icon": "🛋️" },
+    { "id": "library",      "name": "Library",       "row": 2, "col": 1, "icon": "📖" },
+    { "id": "billiard_room","name": "Billiard Room", "row": 2, "col": 2, "icon": "🎱" },
+    { "id": "dining_room",  "name": "Dining Room",   "row": 2, "col": 3, "icon": "🍽️" },
+    { "id": "conservatory", "name": "Conservatory",  "row": 3, "col": 1, "icon": "🌿" },
+    { "id": "ballroom",     "name": "Ballroom",      "row": 3, "col": 2, "icon": "💃" },
+    { "id": "kitchen",      "name": "Kitchen",       "row": 3, "col": 3, "icon": "🍳" }
+  ],
+  "passages": [
+    ["study", "kitchen"],
+    ["lounge", "conservatory"]
+  ],
+  "weapons": [
+    { "id": "candlestick", "name": "Candlestick",  "icon": "🕯️" },
+    { "id": "knife",       "name": "Knife",        "icon": "🔪" },
+    { "id": "lead_pipe",   "name": "Lead Pipe",    "icon": "🔧" },
+    { "id": "revolver",    "name": "Revolver",     "icon": "🔫" },
+    { "id": "rope",        "name": "Rope",         "icon": "🪢" },
+    { "id": "wrench",      "name": "Wrench",       "icon": "🔩" }
+  ],
+  "suspects": [
+    { "id": "scarlett", "name": "Ms. Scarlett",   "icon": "🔴", "color": "#b5333a" },
+    { "id": "mustard",  "name": "Colonel Mustard","icon": "🟡", "color": "#c9962c" },
+    { "id": "orchid",   "name": "Mrs. Orchid",    "icon": "⚪",       "color": "#e7e2d6" },
+    { "id": "green",    "name": "Mr. Green",      "icon": "🟢", "color": "#3f7d4f" },
+    { "id": "peacock",  "name": "Mrs. Peacock",   "icon": "🔵", "color": "#2f5aa8" },
+    { "id": "plum",     "name": "Professor Plum", "icon": "🟣", "color": "#6a4c93" }
+  ]
+}

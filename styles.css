@@ -1,0 +1,173 @@
+:root {
+  --board: #1b1428;
+  --accent: #c9a227;
+  --text: #f5f0e6;
+  --bg: #0f0c17;
+  --panel: #211a30;
+  --not-it: #4a4458;
+  --confirmed: #b5333a;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  background: var(--panel);
+  border-bottom: 2px solid var(--accent);
+}
+
+.topbar h1 {
+  margin: 0;
+  font-size: 1.4rem;
+  letter-spacing: 0.03em;
+}
+
+.theme-picker select {
+  margin-left: 0.5rem;
+  padding: 0.3rem 0.5rem;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(320px, 1fr) minmax(320px, 1fr);
+  gap: 1.5rem;
+  padding: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+@media (max-width: 820px) {
+  .layout { grid-template-columns: 1fr; }
+}
+
+.board-panel, .sheet-panel {
+  background: var(--panel);
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+.board-panel h2, .sheet-panel h2 {
+  margin-top: 0;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 0.6rem;
+  aspect-ratio: 1 / 1;
+  background: var(--board);
+  border-radius: 8px;
+  padding: 0.6rem;
+}
+
+.room {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  border: 2px solid var(--accent);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 0.4rem;
+}
+
+.room .icon { font-size: 1.6rem; }
+
+.room.passage::after {
+  content: "↔ secret passage";
+  position: absolute;
+  bottom: 2px;
+  font-size: 0.6rem;
+  opacity: 0.7;
+}
+
+.sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sheet-hint {
+  margin: 0.25rem 0 1rem;
+  font-size: 0.8rem;
+  opacity: 0.75;
+}
+
+button.danger {
+  background: var(--confirmed);
+  color: var(--text);
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button.danger:hover { filter: brightness(1.1); }
+
+.sheet-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sheet-category h3 {
+  margin: 0 0 0.4rem;
+  font-size: 0.95rem;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sheet-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.4rem;
+}
+
+.sheet-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.5rem;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  user-select: none;
+  font-size: 0.85rem;
+}
+
+.sheet-item .mark {
+  width: 1.1rem;
+  text-align: center;
+}
+
+.sheet-item[data-state="not_it"] {
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--not-it);
+  text-decoration: line-through;
+}
+
+.sheet-item[data-state="suspect"] {
+  border-color: var(--confirmed);
+  background: rgba(181, 51, 58, 0.2);
+}

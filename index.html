@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CommsClue</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1 id="game-title">CommsClue</h1>
+    <label class="theme-picker">
+      Theme:
+      <select id="theme-select"></select>
+    </label>
+  </header>
+
+  <main class="layout">
+    <section class="board-panel">
+      <h2>Board</h2>
+      <div id="board" class="board"></div>
+    </section>
+
+    <section class="sheet-panel">
+      <div class="sheet-header">
+        <h2>Detective Sheet</h2>
+        <button id="clear-sheet" class="danger">Clear Sheet</button>
+      </div>
+      <p class="sheet-hint">Click a cell to cycle: blank → not it → suspect. Saved to this browser only.</p>
+
+      <div class="sheet-grid" id="sheet-grid"></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
