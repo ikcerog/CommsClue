@@ -94,8 +94,17 @@ export class GameRoom {
     });
 
     this.broadcast({ type: "state", game: this.publicGame() });
-    if (this.game.hands[playerId]) {
-      this.sendToPlayer(playerId, { type: "hand", cards: this.game.hands[playerId] });
+    // Send every currently-connected player their hand, not just the one who
+    // just joined — dealing can hand out cards to players who joined earlier
+    // and are still waiting on this same tick.
+    for (const [ws, id] of this.sessions.entries()) {
+      if (this.game.hands[id]) {
+        try {
+          ws.send(JSON.stringify({ type: "hand", cards: this.game.hands[id] }));
+        } catch {
+          // dead socket, will be cleaned up by its own close event
+        }
+      }
     }
 
     return new Response(null, { status: 101, webSocket: client });
