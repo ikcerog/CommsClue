@@ -1,9 +1,8 @@
 // CommsClue live game server — one Durable Object instance per game room.
-// Holds the authoritative state (players, turn, dice, board selection) and
-// fans out updates to every connected player over WebSocket. Per-player
-// secret hands and the solution envelope aren't wired in yet (that's the
-// next step after this base room is working) — this version proves out the
-// join/roll/turn/broadcast loop first.
+// Holds the authoritative state (players, turn, dice, board selection,
+// dealt hands, and the solution envelope) and fans out updates to every
+// connected player over WebSocket. Public state broadcasts strip hands and
+// the solution; each player's own hand is sent only to their own socket.
 
 export class GameRoom {
   constructor(state) {
@@ -36,16 +35,22 @@ export class GameRoom {
     await this.state.storage.put("game", this.game);
   }
 
+  // body: { theme, playerCount, categories: { suspects: [ids], weapons: [ids], rooms: [ids] } }
+  // The Worker doesn't know theme names/icons, only category id lists — that
+  // keeps it decoupled from the frontend's theme JSON.
   async handleCreate(request) {
-    const body = await request.json(); // { theme, playerCount }
+    const body = await request.json();
     this.game = {
       theme: body.theme,
       playerCount: body.playerCount,
-      status: "waiting",
+      categories: body.categories,
+      status: "waiting", // waiting -> in-progress
       players: [],
       turn: null,
       diceHistory: [],
       selectedRoom: null,
+      hands: {}, // playerId -> [{category, id}], never broadcast publicly
+      solution: null, // {suspect, weapon, room}, never broadcast publicly
       createdAt: Date.now(),
     };
     await this.saveGame();
@@ -70,10 +75,15 @@ export class GameRoom {
 
     this.game.players.push({ id: playerId, name: playerName });
     if (!this.game.turn) this.game.turn = playerId;
-    await this.saveGame();
 
     this.sessions.set(server, playerId);
     server.send(JSON.stringify({ type: "welcome", playerId }));
+
+    if (this.game.status === "waiting" && this.game.players.length >= this.game.playerCount) {
+      this.dealCards();
+    }
+
+    await this.saveGame();
 
     server.addEventListener("message", (event) => {
       this.handleMessage(playerId, event.data);
@@ -83,9 +93,43 @@ export class GameRoom {
       this.sessions.delete(server);
     });
 
-    this.broadcast({ type: "state", game: this.game });
+    this.broadcast({ type: "state", game: this.publicGame() });
+    if (this.game.hands[playerId]) {
+      this.sendToPlayer(playerId, { type: "hand", cards: this.game.hands[playerId] });
+    }
 
     return new Response(null, { status: 101, webSocket: client });
+  }
+
+  // Classic Clue dealing: one random card per category goes into the
+  // solution envelope, the rest are shuffled together (not kept separate by
+  // category) and dealt round-robin as evenly as possible.
+  dealCards() {
+    const categories = this.game.categories;
+    const solution = {};
+    const deck = [];
+
+    for (const [category, ids] of Object.entries(categories)) {
+      const shuffled = shuffle(ids);
+      const singular = category.endsWith("s") ? category.slice(0, -1) : category;
+      solution[singular] = shuffled[0];
+      for (const id of shuffled.slice(1)) {
+        deck.push({ category, id });
+      }
+    }
+
+    shuffle(deck);
+
+    const players = this.game.players;
+    const hands = {};
+    players.forEach((p) => (hands[p.id] = []));
+    deck.forEach((card, i) => {
+      hands[players[i % players.length].id].push(card);
+    });
+
+    this.game.solution = solution;
+    this.game.hands = hands;
+    this.game.status = "in-progress";
   }
 
   async handleMessage(playerId, raw) {
@@ -93,6 +137,11 @@ export class GameRoom {
     try {
       msg = JSON.parse(raw);
     } catch {
+      return;
+    }
+
+    if (msg.type === "requestHand") {
+      this.sendToPlayer(playerId, { type: "hand", cards: this.game.hands[playerId] || [] });
       return;
     }
 
@@ -110,7 +159,28 @@ export class GameRoom {
     }
 
     await this.saveGame();
-    this.broadcast({ type: "state", game: this.game });
+    this.broadcast({ type: "state", game: this.publicGame() });
+  }
+
+  // Strips hands and the solution — the only things in `game` that must
+  // never reach every player, just their owner (hands) or nobody (solution)
+  // until the game ends.
+  publicGame() {
+    const { hands, solution, ...safe } = this.game;
+    return safe;
+  }
+
+  sendToPlayer(playerId, message) {
+    const data = JSON.stringify(message);
+    for (const [ws, id] of this.sessions.entries()) {
+      if (id === playerId) {
+        try {
+          ws.send(data);
+        } catch {
+          // dead socket, will be cleaned up by its own close event
+        }
+      }
+    }
   }
 
   broadcast(message) {
@@ -123,6 +193,15 @@ export class GameRoom {
       }
     }
   }
+}
+
+function shuffle(array) {
+  const result = [...array];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
 }
 
 export default {
